@@ -4,6 +4,11 @@
   "description": "Makes it easy to build a frontend displaying data from Cockpit CMS by automatically mapping all collections and regions into variables in the vue data scope.",
   "main": "src/index.js",
   "scripts": {
+    "build": "npm-run-all --parallel build:*",
+    "build:main": "babel --copy-files --out-dir dist --ignore *.test.js src",
+    "build:umd": "webpack --output-filename index.umd.js",
+    "build:umd.min": "webpack --output-filename index.umd.min.js -p",
+    "prebuild": "rimraf dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,5 +29,11 @@
   "homepage": "https://github.com/dropclick/vue-cockpit#readme",
   "dependencies": {
     "vue": "^2.5.14"
+  },
+  "devDependencies": {
+    "babel-cli": "6.11.4",
+    "npm-run-all": "^4.1.2",
+    "rimraf": "^2.6.2",
+    "webpack": "1.13.1"
   }
 }
