@@ -6,8 +6,8 @@
   "scripts": {
     "build": "npm-run-all --parallel build:*",
     "build:main": "babel --copy-files --out-dir dist --ignore *.test.js src",
-    "build:umd": "webpack --output-filename index.umd.js",
-    "build:umd.min": "webpack --output-filename index.umd.min.js -p",
+    "build:umd": "webpack --output-filename vue-cockpit.js",
+    "build:umd.min": "webpack --output-filename vue-cockpit.min.js -p",
     "prebuild": "rimraf dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

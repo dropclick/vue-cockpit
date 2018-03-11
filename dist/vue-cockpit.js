@@ -66,4 +66,4 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ ])
 });
 ;
-//# sourceMappingURL=index.umd.js.map
+//# sourceMappingURL=vue-cockpit.js.map
