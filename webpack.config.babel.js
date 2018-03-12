@@ -7,7 +7,7 @@ exports.default = {
     output: {
         path: (0, _path.join)(__dirname, 'dist'),
         libraryTarget: 'umd',
-        library: 'viewCockpit'
+        library: 'vueCockpit'
     },
     devtool: 'source-map',
     module: {
