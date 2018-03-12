@@ -1,6 +1,3 @@
-var $ = require("jquery");
-var Vue = require("vue");
-
 var init = function(cockpitUrl, apiKey, selector) {
     var data = {
     cockpitUrl: cockpitUrl,
