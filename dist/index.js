@@ -12,7 +12,7 @@ var init = function (cockpitUrl, apiKey, selector) {
   var showHints = window.location.search.indexOf('hint') >= 0;
   var buttonText = showHints ? 'Hide hints' : 'Show hints';
 
-  if (hasCookie) $('body').append('<button id="toggleSegmentHints" class="" style="position: fixed; top: 0; right: 0; background-color: #000; color: #fff; border: 0; font-size: 14px; padding: 10px 15px;">' + buttonText + '</button>');
+  if (hasCookie) $('body').append('<button id="toggleSegmentHints" class="" style="position: fixed; top: 0; right: 0; z-index: 999999; background-color: #000; color: #fff; border: 1px solid #fff; font-family: "sans-serif"; font-size: 14px; padding: 10px 15px;">' + buttonText + '</button>');
 
   $('#toggleSegmentHints').click(function () {
     if (showHints) window.location.href = window.location.href.replace('?hints', '');else window.location.href = window.location.href + '?hints';
