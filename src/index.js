@@ -1,8 +1,8 @@
-var init = function(cockpitUrl, apiKey, selector) {
+var init = function(options) {
     var data = {
-    cockpitUrl: cockpitUrl,
-    apiKey: apiKey,
-    selector: selector,
+    cockpitUrl: options.cockpitUrl,
+    apiKey: options.apiKey,
+    selector: options.selector,
     basePath: location.pathname.slice(0, -1),
     collections: {},
     regions: {}
@@ -13,13 +13,14 @@ var init = function(cockpitUrl, apiKey, selector) {
   var buttonText = showHints ? 'Hide hints' : 'Show hints';
 
   if (hasCookie)
-    $('body').append('<button id="toggleSegmentHints" class="" style="position: fixed; top: 0; right: 0; z-index: 999999; background-color: #222; color: #fff; border: 0; font-family: Sans-Serif; font-size: 14px; padding: 10px 15px;">' + buttonText + '</button>')
+    $('body').append('<button id="toggleSegmentHints" class="" style="position: fixed; top: 0; right: 0; z-index: 999999; background-color: #555; color: #fff; cursor: pointer; border: 0; font-family: Sans-Serif; font-size: 14px; padding: 10px 15px;">' + buttonText + '</button>')
 
   $('#toggleSegmentHints').click(function () {
+    var location = window.location.href.split('#')[0];
     if (showHints)
-      window.location.href = window.location.href.replace('?hints','');
+      window.location.href = location.replace('?hints','');
     else
-      window.location.href = window.location.href + '?hints';
+      window.location.href = location + '?hints';
   });
 
   if (showHints > 0) {
@@ -38,7 +39,7 @@ var init = function(cockpitUrl, apiKey, selector) {
       var $this = $(this);
       var text = $this.text();
       if (text.indexOf('regions.') > 0 || text.indexOf('collections.') > 0) {
-        var segments = text.replace('{{', '').replace('}}', '').split('.');
+        var segments = text.trim().replace('{{', '').replace('}}', '').split('.');
         var entityType = segments[0];
         var entityName = segments[1];
         var entityAttr = segments[2];
