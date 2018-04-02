@@ -132,7 +132,7 @@ var init = function (options) {
             }).then(function (json) {
               self.regions[regionName] = json;
               self.regionsLoaded = isLast;
-              if (self.regionsLoaded && self.collectionsLoaded && self.callback) self.callback();
+              if (self.regionsLoaded && self.collectionsLoaded && options.callback) options.callback();
             }).catch(function (ex) {
               console.log('parsing failed', ex);
             });
@@ -151,7 +151,7 @@ var init = function (options) {
             }).then(function (json) {
               self.collections[collectionName] = json.entries;
               self.collectionsLoaded = isLast;
-              if (self.regionsLoaded && self.collectionsLoaded && self.callback) self.callback();
+              if (self.regionsLoaded && self.collectionsLoaded && options.callback) options.callback();
             }).catch(function (ex) {
               console.log('parsing failed', ex);
             });
