@@ -54,17 +54,19 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 0 */
 /***/ function(module, exports) {
 
-	var init = function(options) {
-	    var data = {
+	var init = function (options) {
+	  var data = {
 	    cockpitUrl: options.cockpitUrl,
 	    apiKey: options.apiKey,
 	    selector: options.selector,
 	    basePath: location.pathname.slice(0, -1),
 	    collections: {},
-	    regions: {}
+	    regions: {},
+	    collectionsLoaded: false,
+	    regionsLoaded: false
 	  }
 	
-	  var hasCookie = document.cookie.length > 0; 
+	  var hasCookie = document.cookie.length > 0;
 	  var showHints = window.location.search.indexOf('hint') >= 0;
 	  var buttonText = showHints ? 'Hide hints' : 'Show hints';
 	
@@ -74,7 +76,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  $('#toggleSegmentHints').click(function () {
 	    var location = window.location.href.split('#')[0];
 	    if (showHints)
-	      window.location.href = location.replace('?hints','');
+	      window.location.href = location.replace('?hints', '');
 	    else
 	      window.location.href = location + '?hints';
 	  });
@@ -180,34 +182,42 @@ return /******/ (function(modules) { // webpackBootstrap
 	            methods: {
 	              fetchAllRegionEntries: function () {
 	                var self = this;
-	                this.regionNames.forEach(function (regionName) {
-	                  self.fetchRegionEntries(regionName);
+	                this.regionNames.forEach(function (regionName, i, array) {
+	                  var isLast = i == array.length - 1;
+	                  self.fetchRegionEntries(regionName, isLast);
 	                });
 	              },
-	              fetchRegionEntries: function (regionName) {
+	              fetchRegionEntries: function (regionName, isLast) {
 	                var self = this;
 	                fetch(data.cockpitUrl + '/api/regions/data/' + regionName + '?token=' + this.apiKey)
 	                  .then(function (response) {
-	                    return response.json()
+	                    return response.json();
 	                  }).then(function (json) {
 	                    self.regions[regionName] = json;
+	                    self.regionsLoaded = isLast;
+	                    if (self.regionsLoaded && self.collectionsLoaded && self.callback)
+	                      self.callback();
 	                  }).catch(function (ex) {
 	                    console.log('parsing failed', ex)
 	                  })
 	              },
 	              fetchAllCollectionEntries: function () {
 	                var self = this;
-	                this.collectionNames.forEach(function (collectionName) {
-	                  self.fetchCollectionEntries(collectionName);
+	                this.collectionNames.forEach(function (collectionName, i, array) {
+	                  var isLast = i == array.length - 1;
+	                  self.fetchCollectionEntries(collectionName, isLast);
 	                });
 	              },
-	              fetchCollectionEntries: function (collectionName) {
+	              fetchCollectionEntries: function (collectionName, isLast) {
 	                var self = this;
 	                fetch(data.cockpitUrl + '/api/collections/get/' + collectionName + '?token=' + this.apiKey)
 	                  .then(function (response) {
-	                    return response.json()
+	                    return response.json();
 	                  }).then(function (json) {
 	                    self.collections[collectionName] = json.entries;
+	                    self.collectionsLoaded = isLast;
+	                    if (self.regionsLoaded && self.collectionsLoaded && self.callback)
+	                      self.callback();
 	                  }).catch(function (ex) {
 	                    console.log('parsing failed', ex)
 	                  })
@@ -221,7 +231,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	
 	module.exports = {
-	    init: init
+	  init: init
 	}
 
 /***/ }
