@@ -5,7 +5,9 @@ var init = function (options) {
     selector: options.selector,
     basePath: location.pathname.slice(0, -1),
     collections: {},
-    regions: {}
+    regions: {},
+    collectionsLoaded: false,
+    regionsLoaded: false
   };
 
   var hasCookie = document.cookie.length > 0;
@@ -118,32 +120,38 @@ var init = function (options) {
         methods: {
           fetchAllRegionEntries: function () {
             var self = this;
-            this.regionNames.forEach(function (regionName) {
-              self.fetchRegionEntries(regionName);
+            this.regionNames.forEach(function (regionName, i, array) {
+              var isLast = i == array.length - 1;
+              self.fetchRegionEntries(regionName, isLast);
             });
           },
-          fetchRegionEntries: function (regionName) {
+          fetchRegionEntries: function (regionName, isLast) {
             var self = this;
             fetch(data.cockpitUrl + '/api/regions/data/' + regionName + '?token=' + this.apiKey).then(function (response) {
               return response.json();
             }).then(function (json) {
               self.regions[regionName] = json;
+              self.regionsLoaded = isLast;
+              if (self.regionsLoaded && self.collectionsLoaded && self.callback) self.callback();
             }).catch(function (ex) {
               console.log('parsing failed', ex);
             });
           },
           fetchAllCollectionEntries: function () {
             var self = this;
-            this.collectionNames.forEach(function (collectionName) {
-              self.fetchCollectionEntries(collectionName);
+            this.collectionNames.forEach(function (collectionName, i, array) {
+              var isLast = i == array.length - 1;
+              self.fetchCollectionEntries(collectionName, isLast);
             });
           },
-          fetchCollectionEntries: function (collectionName) {
+          fetchCollectionEntries: function (collectionName, isLast) {
             var self = this;
             fetch(data.cockpitUrl + '/api/collections/get/' + collectionName + '?token=' + this.apiKey).then(function (response) {
               return response.json();
             }).then(function (json) {
               self.collections[collectionName] = json.entries;
+              self.collectionsLoaded = isLast;
+              if (self.regionsLoaded && self.collectionsLoaded && self.callback) self.callback();
             }).catch(function (ex) {
               console.log('parsing failed', ex);
             });
