@@ -194,7 +194,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    return response.json();
 	                  }).then(function (json) {
 	                    self.regions[regionName] = json;
-	                    self.regionsLoaded = isLast;
+	                    self.regionsLoaded = self.regionsLoaded || isLast;
 	                    if (self.regionsLoaded && self.collectionsLoaded && options.callback)
 	                      options.callback();
 	                  }).catch(function (ex) {
@@ -215,7 +215,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    return response.json();
 	                  }).then(function (json) {
 	                    self.collections[collectionName] = json.entries;
-	                    self.collectionsLoaded = isLast;
+	                    self.collectionsLoaded = self.collectionsLoaded || isLast;
 	                    if (self.regionsLoaded && self.collectionsLoaded && options.callback)
 	                      options.callback();
 	                  }).catch(function (ex) {
