@@ -7,7 +7,9 @@ var init = function (options) {
     collections: {},
     regions: {},
     collectionsLoaded: false,
-    regionsLoaded: false
+    regionsLoaded: false,
+    thumbnailWidth: options.thumbnailWidth? options.thumbnailWidth : 1920,
+    thumbnailQuality: options.thumbnailQuality? options.thumbnailQuality : 70
   }
 
   var hasCookie = document.cookie.length > 0;
@@ -158,6 +160,29 @@ var init = function (options) {
                   .then(function (response) {
                     return response.json();
                   }).then(function (json) {
+                    json.entries.forEach(function (entry) {
+                      Object.keys(entry).forEach(function (key) {
+                        if (entry[key].path) {
+                          fetch(data.cockpitUrl + '/api/cockpit/image?token=' + self.apiKey, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                              'src': entry[key].path,
+                              'm': 'resize',
+                              'w': data.thumbnailWidth,
+                              'q': data.thumbnailQuality
+                            })
+                          })
+                            .then(function (response) {
+                              return response.text();
+                            }).then(function (text) {
+                              entry[key].thumbnailPath = text;
+                            }).catch(function (ex) {
+                              console.log('parsing failed', ex)
+                            })
+                        }
+                      });
+                    })
                     self.collections[collectionName] = json.entries;
                     self.collectionsLoaded = self.collectionsLoaded || isLast;
                     if (self.regionsLoaded && self.collectionsLoaded && options.callback)
