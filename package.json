@@ -1,6 +1,6 @@
 {
   "name": "vue-cockpit",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Makes it easy to build a frontend displaying data from Cockpit CMS by automatically mapping all collections and regions into variables in the vue data scope.",
   "main": "src/index.js",
   "scripts": {
@@ -27,8 +27,7 @@
     "url": "https://github.com/dropclick/vue-cockpit/issues"
   },
   "homepage": "https://github.com/dropclick/vue-cockpit#readme",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "babel-cli": "6.11.4",
     "npm-run-all": "^4.1.2",
