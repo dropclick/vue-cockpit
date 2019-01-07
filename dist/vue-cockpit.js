@@ -64,8 +64,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    regions: {},
 	    collectionsLoaded: false,
 	    regionsLoaded: false,
+	    imagePathsLoaded: false,
+	    loaded: false,
 	    thumbnailWidth: options.thumbnailWidth? options.thumbnailWidth : 1920,
-	    thumbnailQuality: options.thumbnailQuality? options.thumbnailQuality : 70
+	    thumbnailQuality: options.thumbnailQuality? options.thumbnailQuality : 70,
+	    totalNumberOfImageFields: 0,
+	    totalNumberOfImagePathRequests: 0,
 	  }
 	
 	  var hasCookie = document.cookie.length > 0;
@@ -216,6 +220,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	                  .then(function (response) {
 	                    return response.json();
 	                  }).then(function (json) {
+	                    var numberOfImageFieldsPerEntry = 0;
+	                    Object.keys(json.fields).forEach(function (key) {
+	                      if (json.fields[key].type == 'image')
+	                        numberOfImageFieldsPerEntry += 1;
+	                    });
+	                    self.totalNumberOfImageFields += numberOfImageFieldsPerEntry * json.entries.length;
+	                    if (isLast && self.totalNumberOfImageFields == 0) {
+	                      console.log('aha');
+	                      self.imagePathsLoaded = true;
+	                    }
 	                    json.entries.forEach(function (entry) {
 	                      Object.keys(entry).forEach(function (key) {
 	                        if (entry[key].path) {
@@ -233,7 +247,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	                              return response.text();
 	                            }).then(function (text) {
 	                              entry[key].thumbnailPath = text;
+	                              self.totalNumberOfImagePathRequests += 1;
+	                              console.log(self.totalNumberOfImageFields + ':' + self.totalNumberOfImagePathRequests);
+	                              self.imagePathsLoaded = self.totalNumberOfImageFields == self.totalNumberOfImagePathRequests;
+	                              if (self.regionsLoaded && self.collectionsLoaded && self.imagePathsLoaded && options.callback) {
+	                                self.loaded = true;
+	                                options.callback();
+	                              }
 	                            }).catch(function (ex) {
+	                              self.totalNumberOfImagePathRequests += 1;
+	                              self.imagePathsLoaded = self.totalNumberOfImageFields == self.totalNumberOfImagePathRequests;
+	                              if (self.regionsLoaded && self.collectionsLoaded && self.imagePathsLoaded && options.callback) {
+	                                self.loaded = true;
+	                                options.callback();
+	                              }
 	                              console.log('parsing failed', ex)
 	                            })
 	                        }
@@ -241,8 +268,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    })
 	                    self.collections[collectionName] = json.entries;
 	                    self.collectionsLoaded = self.collectionsLoaded || isLast;
-	                    if (self.regionsLoaded && self.collectionsLoaded && options.callback)
+	                    if (self.regionsLoaded && self.collectionsLoaded && self.imagePathsLoaded && options.callback) {
+	                      self.loaded = true;
 	                      options.callback();
+	                    }
 	                  }).catch(function (ex) {
 	                    console.log('parsing failed', ex)
 	                  })
